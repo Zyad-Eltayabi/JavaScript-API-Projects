@@ -38,20 +38,19 @@ document.addEventListener("click", function (e) {
 
 function fetchUserPosts(user) {
     let userId = user.getAttribute("user-Id");
-    let request = new XMLHttpRequest();
-    request.open(
-        "GET",
-        `https://jsonplaceholder.typicode.com/users/${userId}/posts`
-    );
-    request.responseType = "json";
-    request.send();
-    request.onload = () => {
-        if (request.status >= 200 && request.status < 300) {
-            addUserPosts(request.response);
-        } else {
-            alert("Something went wrong");
-        }
-    };
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}/posts`, {
+        method: "GET",
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("failed to fetch posts.");
+            }
+            return response.json();
+        })
+        .then((posts) => {
+            addUserPosts(posts);
+        })
+        .catch((err) => alert(err.message));
 }
 
 function addPost(post) {
